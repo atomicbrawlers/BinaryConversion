@@ -1,0 +1,99 @@
+/************************
+Convert to and from binary
+************************/
+
+import java.io.*;
+import java.util.Scanner;
+
+public class BinaryConversion{
+
+	//public static int increments[] = {128, 64, 32, 16, 8, 4, 2, 1}; //declares global variable
+	
+	public static void main(String[] args){
+		
+		//Scanner
+  		Scanner keyboard = new Scanner(System.in);
+		
+		String conversion = "";
+		
+		while (!conversion.equals("to") && !conversion.equals("from")){
+			System.out.println("Would you like to convert to or from binary?");
+			conversion = keyboard.nextLine().toLowerCase();
+			
+			if (!conversion.equals("to") && !conversion.equals("from"))
+				System.out.println("That's not a valid option.");
+		}
+		
+		System.out.print("Input a number: ");
+		int input = keyboard.nextInt();
+		
+		if (conversion.equals("to")){
+			int bitSize = getBitSize(input);
+			dispBinary(toBinary(input, bitSize, getIncrements(bitSize)), bitSize);
+		} else {
+		//do something else
+		}	
+	}
+	
+	public static int getBitSize(int number){
+		int size;
+		if (number > 16777216) //2^24
+			size = 32;
+		else if (number > 65536) //2^16
+			size = 24;
+		else if (number >	256) //2^8
+			size = 16;
+		else
+			size = 8;		
+		
+		return size;
+	}
+	
+	public static int[] getIncrements(int size){
+		
+		int increments[] = new int[size];
+		
+		for (int counter = size-1; counter >= 0; counter--){
+			increments[counter] = 2;
+			for(int insideCounter = 1; insideCounter < counter; insideCounter++){ //raise 2 to the power of __
+				increments[counter] = increments[counter] * 2;
+			} 
+		}
+		increments[0] = 1;
+		
+		return increments;
+	}
+	
+	public static int[] toBinary(int number, int size, int[] increments){ //converts to binary 
+	
+		int binary[] = new int[size];
+		
+		for(int counter = size-1; counter >= 0; counter--){
+			if(number - increments[counter] >= 0){
+				number = number - increments[counter];
+				binary[counter]++;
+			}	
+		}
+		
+		return binary;
+	}
+	
+	public static void dispBinary(int[] binary, int size){ //check how many 0s before a 1 (in steps of 8) to determine bit size
+		int thisLine = 0;
+		int nextLine = 0;
+		for (int counter = size-1; counter >= 0; counter--){
+			if (thisLine == 4){
+				System.out.print(" ");
+				thisLine = 0;
+			}
+			if (nextLine == 8){
+				System.out.print("\n");
+				nextLine = 0;
+			}	
+			System.out.print(binary[counter]);
+			thisLine++;
+			nextLine++;
+		}	
+	}
+					
+}	
